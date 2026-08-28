@@ -1,12 +1,12 @@
 import numpy as np  # noqa: I001
 from merge_matrices import merge_matrices
+from collections.abc import Callable
 
 
 class GameEngine:
     def __init__(self, max_rows=1000, max_columns=1000):
         self.max_rows = max_rows
         self.max_columns = max_columns
-
         self.reset()
         self.scanning_limit()
 
@@ -15,7 +15,6 @@ class GameEngine:
         col_resolved = columns if columns is not None else self.max_columns
         row_resolved = rows if rows is not None else self.max_rows
 
-        print(col_resolved, row_resolved)
         diff_col = (self.max_columns - col_resolved) // 2
         diff_row = (self.max_rows - row_resolved) // 2
 
@@ -44,6 +43,7 @@ class GameEngine:
             np.zeros((max_rows, max_columns)),
             lambda i, j, v: self.alive_cells.add((i, j)) if v == 1 else None,
         )
+
         return self.generation
 
     def set_value_cell(self, i, j, status, in_memo=False):
@@ -54,6 +54,7 @@ class GameEngine:
         new_cell_value = 1 if status else 0
 
         self.generation[i_][j_] = new_cell_value
+        self.set_cell_frecuency(i_, j_, new_cell_value)
 
         if in_memo:
             self.cells_memory.add((i_, j_))
@@ -70,13 +71,31 @@ class GameEngine:
         self.cells_memory = set()
         self.current_generation = 0
         self.generation = np.zeros((self.max_rows, self.max_columns))
+        self.frecuencies = {}
 
-    def next_generation(self, callback: lambda: (int, int, int)):
+    def set_cell_frecuency(self, i, j, value):
+        pos = (i, j)
+        if self.frecuencies.get(pos) is None:
+            self.frecuencies[pos] = value
+        else:
+            self.frecuencies[pos] += value
+
+    def get_cell_frecuency(self, i, j):
+        pos = (i, j)
+        if self.frecuencies.get(pos) is None:
+            return 0
+        else:
+            return self.frecuencies[pos]
+
+    def get_cell_value(self, i, j):
+        return self.generation[i][j]
+
+    def next_generation(self, callback: Callable[[int, int, int], None]):
         next_alive_cells = set()
 
         generation_copy = self.generation.copy()
 
-        explored_cells = {}
+        explored_cells = set()
 
         for i, j in self.alive_cells:  # n
             positions_ = [
@@ -91,8 +110,8 @@ class GameEngine:
                 ((i - 1) % self.max_rows, j),
             ]
 
-            for k, p in positions_:
-                if explored_cells.get((k, p)) is not None:
+            for k, p in positions_:  # 3x3
+                if (k, p) in explored_cells:
                     continue
 
                 cell_value = self.generation[k][p]
@@ -101,12 +120,13 @@ class GameEngine:
 
                 if cell_value != new_cell_value:
                     generation_copy[k][p] = new_cell_value
+                    self.set_cell_frecuency(k, p, new_cell_value)
                     callback(k, p, new_cell_value)
 
                 if new_cell_value == 1:
                     next_alive_cells.add((k, p))
 
-                explored_cells[(k, p)] = True
+                explored_cells.add((k, p))
 
         self.current_generation += 1
         self.alive_cells = next_alive_cells
@@ -126,15 +146,11 @@ class GameEngine:
 
         return cell
 
-    def get_generation_value(self, i, j):
-        return self.generation[i + self.scaning_min_i][j + self.scaning_min_j]
-
     def get_total_neighbors(self, board: list[list[int]], i: int, j: int) -> int:
         total_neighbors = 0
 
         for k in [1, 0, -1]:
             for p in [1, 0, -1]:
-                # se obtiene el residudio de multiplicar la posicion con el limite para que sea toloideal
                 ni = (i + k) % self.max_rows
                 nc = (j + p) % self.max_columns
 

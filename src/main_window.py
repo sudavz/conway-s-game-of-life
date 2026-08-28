@@ -41,19 +41,22 @@ class MainWindow:
                     size = pygame.display.get_window_size()
                     self.simulation.resize(size[0], size[1])
 
-                if self.simulation.simulation and event.type == pygame.MOUSEBUTTONUP:
+                if self.simulation.is_running and event.type == pygame.MOUSEBUTTONUP:
                     self.simulation.release_cells_memory()
 
                 if event.type == pygame.KEYDOWN:
                     keys = pygame.key.get_pressed()
                     if keys[pygame.K_SPACE]:
-                        if not self.simulation.simulation:
+                        if not self.simulation.is_running:
                             self.simulation.start()
                         else:
                             self.simulation.stop()
 
                     if keys[pygame.K_c]:
                         self.simulation.clear()
+
+                    if keys[pygame.K_f]:
+                        self.simulation.switch_show_frecuencies()
 
                     if keys[pygame.K_b]:
                         self.simulation.switch_cell_border()
@@ -86,7 +89,7 @@ class MainWindow:
             current_time = pygame.time.get_ticks()
 
             if (
-                self.simulation.simulation
+                self.simulation.is_running
                 and current_time - last_time >= current_window_to_simulate
             ):
                 self.simulation.next_generation()

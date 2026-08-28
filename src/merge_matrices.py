@@ -1,12 +1,9 @@
-# def print_matriz(matriz):
-#     for i in matriz:
-#         for j in i:
-#             print(j, end="  ")
-#         print()
-#     print()
+from collections.abc import Callable
 
 
-def merge_matrices(old_matriz, new_matriz, callback=lambda i, j: j) -> list[list[int]]:
+def merge_matrices(
+    old_matriz, new_matriz, callback: Callable[[int, int, int], None]
+) -> list[list[int]]:
 
     len_old_matriz_rows = len(old_matriz)
     len_old_matriz_columns = len(old_matriz[0])
@@ -46,14 +43,3 @@ def merge_matrices(old_matriz, new_matriz, callback=lambda i, j: j) -> list[list
             callback(i + diff_i_new, j + diff_j_new, value)
 
     return new_matriz
-
-
-# old_matriz = [[1 for _ in range(10)] for _ in range(6)]  # new matriz
-
-# new_matriz = [[0 for _ in range(6)] for _ in range(10)]  # new matriz
-
-# print_matriz(old_matriz)
-
-# print_matriz(new_matriz)
-
-# print_matriz(merge_matrices(old_matriz, new_matriz))

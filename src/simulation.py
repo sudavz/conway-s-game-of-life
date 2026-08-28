@@ -3,6 +3,7 @@ from math import ceil
 import numpy as np
 import pygame
 
+from calculate_rgb_color import calculate_rgb_color
 from game_egine import GameEngine
 
 
@@ -11,6 +12,7 @@ class Simulation:
     CELL_ALIVE_COLOR = (198, 229, 245)
     CELL_DEAD_COLOR = (0, 0, 0)
     CELL_SIZE = 10
+    CELL_BORDER = 1
 
     def __init__(self, parent_surface: pygame.Surface):
         parent_surface_size = parent_surface.get_size()
@@ -20,8 +22,9 @@ class Simulation:
         self.surface_height = parent_surface_size[1]
         self.surface.fill(self.BACKGROUND_COLOR)
         self.surface_rect = self.surface.get_rect(topleft=(0, 0))
-        self.cell_border = 1
-        self.simulation = False
+        self.show_cell_border = True
+        self.show_frecuencies = False
+        self.is_running = False
         self.build_simulation()
 
     def build_simulation(self):
@@ -47,14 +50,12 @@ class Simulation:
                 i = py // self.CELL_SIZE
                 j = px // self.CELL_SIZE
 
-                value = self.game_engine.get_generation_value(i, j)
+                i_ = i + self.game_engine.scaning_min_i
+                j_ = i + self.game_engine.scaning_min_j
 
-                if value == 1:
-                    pygame.draw.rect(self.surface, self.CELL_ALIVE_COLOR, rect)
-                else:
-                    pygame.draw.rect(
-                        self.surface, self.CELL_DEAD_COLOR, rect, self.cell_border
-                    )
+                value = self.game_engine.get_cell_value(i_, j_)
+
+                self.update_rect(i, j, value, rect)
 
                 column_cell_rects.append(rect)
 
@@ -62,22 +63,37 @@ class Simulation:
 
         self.cell_rects = np.array(cell_rects)
 
-    def update_rect(self, i, j, new_cell_value):
+    def switch_cell_border(self):
+        self.show_cell_border = not self.show_cell_border
+        self.refresh_all_rects()
+
+    def switch_show_frecuencies(self):
+        self.show_frecuencies = not self.show_frecuencies
+        self.refresh_all_rects()
+
+    def update_rect(self, i, j, new_cell_value, rect=None):
+
         if i >= self.max_window_rows or j >= self.max_window_columns or i < 0 or j < 0:
             return
 
-        cell_rect = self.cell_rects[i][j]
+        cell_rect = rect if rect is not None else self.cell_rects[i][j]
 
         color = self.CELL_ALIVE_COLOR if new_cell_value == 1 else self.CELL_DEAD_COLOR
 
-        border = 0 if new_cell_value == 1 else 1
+        cell_border = 0
 
-        border *= self.cell_border
+        if self.show_cell_border:
+            cell_border = 0 if new_cell_value == 1 else self.CELL_BORDER
+            if cell_border == self.CELL_BORDER:
+                pygame.draw.rect(self.surface, self.BACKGROUND_COLOR, cell_rect, 0)
 
-        if border == 1:
-            pygame.draw.rect(self.surface, self.BACKGROUND_COLOR, cell_rect, 0)
+        if self.show_frecuencies:
+            frecuency = self.game_engine.get_cell_frecuency(
+                i + self.game_engine.scaning_min_i, j + self.game_engine.scaning_min_j
+            )
+            color = calculate_rgb_color(frecuency)
 
-        pygame.draw.rect(self.surface, color, cell_rect, border)
+        pygame.draw.rect(self.surface, color, cell_rect, cell_border)
 
     def resize(self, width, heigth):
         self.surface_height = heigth
@@ -90,14 +106,6 @@ class Simulation:
         self.game_engine.scanning_limit(self.max_window_rows, self.max_window_columns)
         self.build_rects()
 
-    def switch_cell_border(self):
-        self.cell_border = 0 if self.cell_border == 1 else 1
-        ## Sole le coloque border a los rects que estan en la ventana
-        for i in range(self.max_window_rows):
-            for j in range(self.max_window_columns):
-                cell_value = self.game_engine.get_generation_value(i, j)
-                self.update_rect(i, j, cell_value)
-
     def set_cell_status(self, coord_x: int, coord_y: int, status: bool) -> tuple[int]:
         j = coord_x // self.CELL_SIZE  # columns
         i = coord_y // self.CELL_SIZE  # rows
@@ -106,11 +114,11 @@ class Simulation:
             i,
             j,
             status,
-            in_memo=self.simulation,
+            in_memo=self.is_running,
         )
 
         # Optimization  only render the cell that have change
-        if before_cell_value != new_cell_value:
+        if self.show_frecuencies or before_cell_value != new_cell_value:
             self.update_rect(i, j, new_cell_value)
 
         return (i, j)
@@ -119,10 +127,10 @@ class Simulation:
         self.game_engine.release_cells_memory()
 
     def start(self):
-        self.simulation = True
+        self.is_running = True
 
     def stop(self):
-        self.simulation = False
+        self.is_running = False
 
     def clear(self):
         self.stop()
@@ -130,6 +138,14 @@ class Simulation:
         for i in range(self.max_window_rows):
             for j in range(self.max_window_columns):
                 self.update_rect(i, j, 0)
+
+    def refresh_all_rects(self):
+        for i in range(self.max_window_rows):
+            for j in range(self.max_window_columns):
+                i_ = i + self.game_engine.scaning_min_i
+                j_ = j + self.game_engine.scaning_min_j
+                cell_value = self.game_engine.get_cell_value(i_, j_)
+                self.update_rect(i, j, cell_value)
 
     def next_generation(self):
         self.game_engine.next_generation(
