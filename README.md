@@ -42,6 +42,10 @@ The game progresses through generations—each generation is an iteration of the
 
 For practical purposes, this project models a finite world of size $N \times M$. The world is represented as a matrix where each position holds a cell's state (0 represents a dead cell and 1 represents a live cell). During each iteration (generation), we inspect the adjacent neighbors—including diagonals—for every cell to determine its next state. The logic and game rules are implemented in a Python engine, while Pygame handles the visual rendering.
 
+### Heat map
+
+One interesting feature is the heat map, which allows us to observe the frequency of living cells across each generation; we can also see which parts of the map had a higher concentration of living cells.
+
 ## Optimizations
 
 ### Analyzing States
@@ -193,5 +197,6 @@ python src/main.py
 - **SPACE Key:** Start / Pause simulation.
 - **C Key:** Clear board and reset world.
 - **B Key:** Toggle grid visibility.
+- **F Key:** Toggle heat map visibility.
 - **N Key:** Decrease time between generations (faster).
 - **M Key:** Increase time between generations (slower).
