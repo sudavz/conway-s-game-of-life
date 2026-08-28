@@ -51,7 +51,7 @@ class Simulation:
                 j = px // self.CELL_SIZE
 
                 i_ = i + self.game_engine.scaning_min_i
-                j_ = i + self.game_engine.scaning_min_j
+                j_ = j + self.game_engine.scaning_min_j
 
                 value = self.game_engine.get_cell_value(i_, j_)
 
@@ -155,3 +155,9 @@ class Simulation:
                 v,
             )
         )
+
+    def get_total_alive_cells(self):
+        return len(self.game_engine.alive_cells)
+
+    def get_current_generation(self):
+        return self.game_engine.current_generation

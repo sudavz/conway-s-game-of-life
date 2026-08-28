@@ -2,6 +2,7 @@ from sys import exit
 
 import pygame
 
+from navbar_info import NavbarInfo
 from simulation import Simulation
 
 
@@ -15,14 +16,15 @@ class MainWindow:
         self.heigth = heigth
         self.width = width
         pygame.init()
+        icon = pygame.image.load("assets/conway-life-glider.svg")
+        pygame.display.set_icon(icon)
         pygame.display.set_caption("Conway's Game of Life")
         self.display = pygame.display.set_mode(
             (self.width, self.heigth), pygame.RESIZABLE
         )
-
         self.clock = pygame.time.Clock()
         self.simulation = Simulation(self.display)
-        self.generation_font: pygame.font.SysFont = pygame.font.SysFont("arial", 15)
+        self.navbar_info = NavbarInfo(self.display)
 
     def run(self):
 
@@ -40,6 +42,8 @@ class MainWindow:
                 if event.type == pygame.VIDEORESIZE:
                     size = pygame.display.get_window_size()
                     self.simulation.resize(size[0], size[1])
+                    self.navbar_info.build()
+                    self.navbar_info.update_size(size[0], size[1])
 
                 if self.simulation.is_running and event.type == pygame.MOUSEBUTTONUP:
                     self.simulation.release_cells_memory()
@@ -93,9 +97,18 @@ class MainWindow:
                 and current_time - last_time >= current_window_to_simulate
             ):
                 self.simulation.next_generation()
+                self.navbar_info.update_generation(
+                    self.simulation.get_current_generation()
+                )
                 last_time = current_time
 
+            self.navbar_info.update_cell_alives(self.simulation.get_total_alive_cells())
+            self.navbar_info.update_speed(
+                self.MAX_WINDOW_MS_TO_SIMULATE - current_window_to_simulate
+            )
+            self.navbar_info.update_fps(self.FPS_RATE)
             self.display.blit(self.simulation.surface, self.simulation.surface_rect)
+            self.display.blit(self.navbar_info.surface, self.navbar_info.surface_rect)
 
             pygame.display.update()
             self.clock.tick(self.FPS_RATE)
