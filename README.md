@@ -19,9 +19,9 @@
 
 A year ago, I stumbled upon a game called `game-of-life` created by British mathematician John Conway. I found it utterly fascinating how, with just 4 simple rules, it could simulate such complex and extraordinary behavior. Motivated and excited, I decided to implement this game using Python and Pygame to bring it to life. The result is an engaging visualization that lets us understand how the game behaves and observe the myriad of patterns that emerge from just an initial configuration of live cells.
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/1.gif">
-<p style="text-align: center;">3x5 Matrix, Live cells: 3</p>
+<div align="center">
+  <img src="docs/1.gif" width="480" alt="3x5 Matrix, Live cells: 3">
+  <p>3x5 Matrix, Live cells: 3</p>
 </div>
 
 ## Behavior
@@ -53,9 +53,9 @@ One interesting feature is the heat map, which allows us to observe the frequenc
 
 While testing setups on larger finite grids, I noticed that computational overhead grew rapidly with world size. For large grids, evaluating every $N \times M$ cell each turn caused severe performance slowdowns. For instance, a $10000 \times 10000$ matrix requires evaluating 100,000,000 cells every generation, yielding a time complexity of $O(N \times M)$ (or $O(N^2)$ for square matrices).
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/8.png">
-<p style="text-align: center">25x25 Matrix, Live cells: 5</p>
+<div align="center">
+  <img src="docs/8.png" width="480" alt="25x25 Matrix, Live cells: 5">
+  <p>25x25 Matrix, Live cells: 5</p>
 </div>
 
 ##### Solution
@@ -66,9 +66,9 @@ Instead of checking all $N \times M$ positions, we can restrict our focus to the
 
 Instead of processing the entire board, we only inspect the $3 \times 3$ neighborhood (9 candidate cells) around each live cell. To decide whether each candidate lives or dies in the next generation, we evaluate its own $3 \times 3$ (9) neighbors. This yields an upper bound of $N \times (3 \times 3) \times (3 \times 3) = 81N$ operations per generation.
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/7.png">
-<p style="text-align: center">Bounded search area</p>
+<div align="center">
+  <img src="docs/7.png" width="380" alt="Bounded search area">
+  <p>Bounded search area</p>
 </div>
 
 ##### Practical Example
@@ -95,9 +95,9 @@ We solve this inefficiency using **dynamic programming**.
 
 Focusing on live cells reduces unnecessary work, but overlapping neighborhoods still introduce redundant checks when live cells sit close together:
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/3.png">
-<p style="text-align: center;">3x5 Matrix, Live cells: 3</p>
+<div align="center">
+  <img src="docs/3.png" width="540" alt="3x5 Matrix, Live cells: 3">
+  <p>3x5 Matrix, Live cells: 3</p>
 </div>
 
 In this $3 \times 5$ mini-world, live cells reside at positions `(1,1)`, `(1,2)`, and `(1,3)`. Evaluating cell `(1,1)` checks all positions it can influence, including itself: `(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)`.
@@ -142,12 +142,12 @@ As each candidate cell is processed, its coordinate is added to a **`set()`**. I
 
 ## Previews
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/9.webp">
+<div align="center">
+  <img src="docs/9.webp" width="700" alt="Preview 1">
 </div>
 <br>
-<div>
-<img style="display: block; margin: 0 auto" src="docs/10.webp">
+<div align="center">
+  <img src="docs/10.webp" width="700" alt="Preview 2">
 </div>
 
 ## Installation and Usage
@@ -166,7 +166,7 @@ Ensure you have installed:
 1. **Clone this repository:**
 
 ```bash
-git clone [https://github.com/suaadev/conway-s-game-of-life.git](https://github.com/suaadev/conway-s-game-of-life.git)
+git clone https://github.com/suaadev/conway-s-game-of-life.git
 cd conway-s-game-of-life
 
 ```

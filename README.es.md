@@ -19,9 +19,9 @@
 
 Hace un año, me topé con un juego llamado `game-of-life` creado por el matemático británico John Conway. Me pareció absolutamente fascinante cómo, con tan solo 4 reglas simples, podía simular un comportamiento tan complejo y extraordinario. Motivado y emocionado, decidí implementar este juego utilizando Python y Pygame para darle vida. El resultado es una atractiva visualización que nos permite comprender cómo se comporta el juego y observar la infinidad de patrones que emergen a partir de una simple configuración inicial de células vivas.
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/1.gif">
-<p style="text-align: center;">Matriz de 3x5, Células vivas: 3</p>
+<div align="center">
+  <img src="docs/1.gif" width="480" alt="Matriz de 3x5, Células vivas: 3">
+  <p>Matriz de 3x5, Células vivas: 3</p>
 </div>
 
 ## Comportamiento
@@ -53,9 +53,9 @@ Una característica interesante es el mapa de calor, que nos permite observar la
 
 Al probar configuraciones en cuadrículas finitas más grandes, noté que la sobrecarga computacional crecía rápidamente con el tamaño del mundo. Para cuadrículas grandes, evaluar cada una de las $N \times M$ celdas en cada turno causaba caídas severas de rendimiento. Por ejemplo, una matriz de $10000 \times 10000$ requiere evaluar 100,000,000 de celdas en cada generación, lo que resulta en una complejidad temporal de $O(N \times M)$ (u $O(N^2)$ para matrices cuadradas).
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/8.png">
-<p style="text-align: center">Matriz de 25x25, Células vivas: 5</p>
+<div align="center">
+  <img src="docs/8.png" width="480" alt="Matriz de 25x25, Células vivas: 5">
+  <p>Matriz de 25x25, Células vivas: 5</p>
 </div>
 
 ##### Solución
@@ -66,9 +66,9 @@ En lugar de verificar todas las $N \times M$ posiciones, podemos restringir nues
 
 En lugar de procesar todo el tablero, solo inspeccionamos el vecindario de $3 \times 3$ (9 celdas candidatas) alrededor de cada célula viva. Para decidir si cada candidata vive o muere en la siguiente generación, evaluamos sus propios $3 \times 3$ (9) vecinos. Esto produce un límite superior de $N \times (3 \times 3) \times (3 \times 3) = 81N$ operaciones por generación.
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/7.png">
-<p style="text-align: center">Área de búsqueda delimitada</p>
+<div align="center">
+  <img src="docs/7.png" width="380" alt="Área de búsqueda delimitada">
+  <p>Área de búsqueda delimitada</p>
 </div>
 
 ##### Ejemplo práctico
@@ -95,9 +95,9 @@ Resolvemos esta ineficiencia utilizando **programación dinámica**.
 
 Concentrarse en las células vivas reduce el trabajo innecesario, pero los vecindarios superpuestos aún introducen verificaciones redundantes cuando las células vivas se encuentran cercanas entre sí:
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/3.png">
-<p style="text-align: center;">Matriz de 3x5, Células vivas: 3</p>
+<div align="center">
+  <img src="docs/3.png" width="540" alt="Matriz de 3x5, Células vivas: 3">
+  <p>Matriz de 3x5, Células vivas: 3</p>
 </div>
 
 En este minimundo de $3 \times 5$, las células vivas se encuentran en las posiciones `(1,1)`, `(1,2)` y `(1,3)`. Evaluar la célula `(1,1)` verifica todas las posiciones en las que puede influir, incluyéndose a sí misma: `(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)`.
@@ -142,12 +142,12 @@ A medida que se procesa cada celda candidata, su coordenada se agrega a un **`se
 
 ## Vistas previas
 
-<div>
-<img style="display: block; margin: 0 auto" src="docs/9.webp">
+<div align="center">
+  <img src="docs/9.webp" width="700" alt="Vista previa 1">
 </div>
 <br>
-<div>
-<img style="display: block; margin: 0 auto" src="docs/10.webp">
+<div align="center">
+  <img src="docs/10.webp" width="700" alt="Vista previa 2">
 </div>
 
 ## Instalación y Uso
