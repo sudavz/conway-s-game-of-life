@@ -20,8 +20,7 @@
 A year ago, I stumbled upon a game called `game-of-life` created by British mathematician John Conway. I found it utterly fascinating how, with just 4 simple rules, it could simulate such complex and extraordinary behavior. Motivated and excited, I decided to implement this game using Python and Pygame to bring it to life. The result is an engaging visualization that lets us understand how the game behaves and observe the myriad of patterns that emerge from just an initial configuration of live cells.
 
 <div align="center">
-  <img src="docs/1.gif" width="480" alt="3x5 Matrix, Live cells: 3">
-  <p>3x5 Matrix, Live cells: 3</p>
+  <img src="docs/1.gif" width="480" >
 </div>
 
 ## Behavior

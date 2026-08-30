@@ -20,8 +20,7 @@
 Hace un año, me topé con un juego llamado `game-of-life` creado por el matemático británico John Conway. Me pareció absolutamente fascinante cómo, con tan solo 4 reglas simples, podía simular un comportamiento tan complejo y extraordinario. Motivado y emocionado, decidí implementar este juego utilizando Python y Pygame para darle vida. El resultado es una atractiva visualización que nos permite comprender cómo se comporta el juego y observar la infinidad de patrones que emergen a partir de una simple configuración inicial de células vivas.
 
 <div align="center">
-  <img src="docs/1.gif" width="480" alt="Matriz de 3x5, Células vivas: 3">
-  <p>Matriz de 3x5, Células vivas: 3</p>
+  <img src="docs/1.gif" width="480" >
 </div>
 
 ## Comportamiento
