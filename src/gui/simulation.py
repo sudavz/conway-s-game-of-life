@@ -3,8 +3,8 @@ from math import ceil
 import numpy as np
 import pygame
 
-from calculate_rgb_color import calculate_rgb_color
 from game_egine import GameEngine
+from utils import calculate_rgb_color
 
 
 class Simulation:
@@ -30,11 +30,11 @@ class Simulation:
     def build_simulation(self):
         self.max_window_rows = ceil(self.surface_height / self.CELL_SIZE)
         self.max_window_columns = ceil(self.surface_width / self.CELL_SIZE)
-        display_width, display_heignt = pygame.display.get_desktop_sizes()[0]
-
+        display_width, display_heignt = pygame.display.get_desktop_sizes()[
+            0
+        ]  # Get full display size to create game world
         max_rows_engine = ceil(display_heignt / self.CELL_SIZE)
         max_cols_engine = ceil(display_width / self.CELL_SIZE)
-
         self.game_engine = GameEngine(max_rows_engine, max_cols_engine)
         self.game_engine.scanning_limit(self.max_window_rows, self.max_window_columns)
         self.build_rects()
@@ -91,7 +91,7 @@ class Simulation:
             frecuency = self.game_engine.get_cell_frecuency(
                 i + self.game_engine.scaning_min_i, j + self.game_engine.scaning_min_j
             )
-            color = calculate_rgb_color(frecuency)
+            color = calculate_rgb_color.calculate_rgb_color(frecuency)
 
         pygame.draw.rect(self.surface, color, cell_rect, cell_border)
 

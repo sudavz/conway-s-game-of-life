@@ -2,8 +2,8 @@ from sys import exit
 
 import pygame
 
-from navbar_info import NavbarInfo
-from simulation import Simulation
+from .navbar_info import NavbarInfo
+from .simulation import Simulation
 
 
 class MainWindow:
@@ -58,6 +58,7 @@ class MainWindow:
 
                     if keys[pygame.K_c]:
                         self.simulation.clear()
+                        self.navbar_info.build()
 
                     if keys[pygame.K_f]:
                         self.simulation.switch_show_frecuencies()
@@ -107,6 +108,7 @@ class MainWindow:
                 self.MAX_WINDOW_MS_TO_SIMULATE - current_window_to_simulate
             )
             self.navbar_info.update_fps(self.FPS_RATE)
+
             self.display.blit(self.simulation.surface, self.simulation.surface_rect)
             self.display.blit(self.navbar_info.surface, self.navbar_info.surface_rect)
 

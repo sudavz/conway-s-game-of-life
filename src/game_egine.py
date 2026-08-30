@@ -1,6 +1,8 @@
-import numpy as np  # noqa: I001
-from merge_matrices import merge_matrices
 from collections.abc import Callable
+
+import numpy as np
+
+from utils import merge_matrices
 
 
 class GameEngine:
@@ -24,7 +26,7 @@ class GameEngine:
         self.scaning_min_i = diff_row
         self.scaning_max_i = self.max_rows - diff_row - 1
 
-        print(
+        """print(
             (
                 self.scaning_max_i - self.scaning_min_i,
                 self.scaning_max_j - self.scaning_min_j,
@@ -32,6 +34,7 @@ class GameEngine:
             (self.scaning_min_i, self.scaning_min_j),
             (self.scaning_max_i, self.scaning_max_j),
         )
+        """
 
     def resize(self, max_rows, max_columns):
         self.cells_memory = set()

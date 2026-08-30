@@ -1,8 +1,8 @@
-from main_window import MainWindow
+from gui import main_window as mw
 
 
 def main():
-    main_window = MainWindow(1000, 1000)
+    main_window = mw.MainWindow(1000, 1000)
     main_window.run()
 
 
