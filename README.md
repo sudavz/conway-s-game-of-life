@@ -20,7 +20,8 @@
 A year ago, I stumbled upon a game called `game-of-life` created by British mathematician John Conway. I found it utterly fascinating how, with just 4 simple rules, it could simulate such complex and extraordinary behavior. Motivated and excited, I decided to implement this game using Python and Pygame to bring it to life. The result is an engaging visualization that lets us understand how the game behaves and observe the myriad of patterns that emerge from just an initial configuration of live cells.
 
 <div>
-<img style="display: block; margin: 0 auto" src="docs/ezgif-12a5b859dc35bc1b.gif">
+<img style="display: block; margin: 0 auto" src="docs/1.gif">
+<p style="text-align: center;">3x5 Matrix, Live cells: 3</p>
 </div>
 
 ## Behavior
@@ -53,7 +54,7 @@ One interesting feature is the heat map, which allows us to observe the frequenc
 While testing setups on larger finite grids, I noticed that computational overhead grew rapidly with world size. For large grids, evaluating every $N \times M$ cell each turn caused severe performance slowdowns. For instance, a $10000 \times 10000$ matrix requires evaluating 100,000,000 cells every generation, yielding a time complexity of $O(N \times M)$ (or $O(N^2)$ for square matrices).
 
 <div>
-<img style="display: block; margin: 0 auto" src="docs/image-8.png">
+<img style="display: block; margin: 0 auto" src="docs/8.png">
 <p style="text-align: center">25x25 Matrix, Live cells: 5</p>
 </div>
 
@@ -66,7 +67,7 @@ Instead of checking all $N \times M$ positions, we can restrict our focus to the
 Instead of processing the entire board, we only inspect the $3 \times 3$ neighborhood (9 candidate cells) around each live cell. To decide whether each candidate lives or dies in the next generation, we evaluate its own $3 \times 3$ (9) neighbors. This yields an upper bound of $N \times (3 \times 3) \times (3 \times 3) = 81N$ operations per generation.
 
 <div>
-<img style="display: block; margin: 0 auto" src="docs/image-7.png">
+<img style="display: block; margin: 0 auto" src="docs/7.png">
 <p style="text-align: center">Bounded search area</p>
 </div>
 
@@ -95,7 +96,7 @@ We solve this inefficiency using **dynamic programming**.
 Focusing on live cells reduces unnecessary work, but overlapping neighborhoods still introduce redundant checks when live cells sit close together:
 
 <div>
-<img style="display: block; margin: 0 auto" src="docs/image-3.png">
+<img style="display: block; margin: 0 auto" src="docs/3.png">
 <p style="text-align: center;">3x5 Matrix, Live cells: 3</p>
 </div>
 
@@ -138,6 +139,16 @@ Several positions are re-calculated because they overlap with the neighborhood o
 To eliminate these duplicate calculations, we apply a **dynamic programming pattern (top-down with memoization)**.
 
 As each candidate cell is processed, its coordinate is added to a **`set()`**. In subsequent checks, we query the set to see if the position was already evaluated during the current generation. This ensures each candidate position is calculated **exactly once** per tick.
+
+## Previews
+
+<div>
+<img style="display: block; margin: 0 auto" src="docs/9.webp">
+</div>
+<br>
+<div>
+<img style="display: block; margin: 0 auto" src="docs/10.webp">
+</div>
 
 ## Installation and Usage
 
@@ -198,5 +209,5 @@ python src/main.py
 - **C Key:** Clear board and reset world.
 - **B Key:** Toggle grid visibility.
 - **F Key:** Toggle heat map visibility.
-- **N Key:** Decrease time between generations (faster).
-- **M Key:** Increase time between generations (slower).
+- **N Key:** Increase time between generations (slower).
+- **M Key:** Decrease time between generations (faster).
