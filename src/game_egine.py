@@ -1,9 +1,5 @@
 from collections.abc import Callable
 
-import numpy as np
-
-from utils import merge_matrices
-
 
 class GameEngine:
     def __init__(self, max_rows=1000, max_columns=1000):
@@ -26,43 +22,26 @@ class GameEngine:
         self.scaning_min_i = diff_row
         self.scaning_max_i = self.max_rows - diff_row - 1
 
-        """print(
-            (
-                self.scaning_max_i - self.scaning_min_i,
-                self.scaning_max_j - self.scaning_min_j,
-            ),
-            (self.scaning_min_i, self.scaning_min_j),
-            (self.scaning_max_i, self.scaning_max_j),
-        )
-        """
-
-    def resize(self, max_rows, max_columns):
-        self.cells_memory = set()
-        self.alive_cells = set()
-        self.max_rows = max_rows
-        self.max_columns = max_columns
-        self.generation = merge_matrices(
-            self.generation,
-            np.zeros((max_rows, max_columns)),
-            lambda i, j, v: self.alive_cells.add((i, j)) if v == 1 else None,
-        )
-
-        return self.generation
-
     def set_value_cell(self, i, j, status, in_memo=False):
-        i_ = i + self.scaning_min_i
-        j_ = j + self.scaning_min_j
-        before_cell_value = self.generation[i_][j_]
+
+        pos = (i + self.scaning_min_i, j + self.scaning_min_j)
+
+        before_cell_value = self.get_cell_value(pos[0], pos[1])
 
         new_cell_value = 1 if status else 0
 
-        self.generation[i_][j_] = new_cell_value
-        self.set_cell_frecuency(i_, j_, new_cell_value)
+        self.set_cell_frecuency(pos[0], pos[1], new_cell_value)
 
-        if in_memo:
-            self.cells_memory.add((i_, j_))
+        if new_cell_value == 1:
+            if in_memo:
+                self.cells_memory.add(pos)
+            else:
+                self.alive_cells.add(pos)
         else:
-            self.alive_cells.add((i_, j_))
+            if pos in self.cells_memory:
+                self.cells_memory.remove(pos)
+            if pos in self.alive_cells:
+                self.alive_cells.remove(pos)
 
         return (new_cell_value, before_cell_value)
 
@@ -73,7 +52,6 @@ class GameEngine:
         self.alive_cells = set()
         self.cells_memory = set()
         self.current_generation = 0
-        self.generation = np.zeros((self.max_rows, self.max_columns))
         self.frecuencies = {}
 
     def set_cell_frecuency(self, i, j, value):
@@ -91,13 +69,10 @@ class GameEngine:
             return self.frecuencies[pos]
 
     def get_cell_value(self, i, j):
-        return self.generation[i][j]
+        return 1 if (i, j) in self.alive_cells else 0
 
     def next_generation(self, callback: Callable[[int, int, int], None]):
         next_alive_cells = set()
-
-        generation_copy = self.generation.copy()
-
         explored_cells = set()
 
         for i, j in self.alive_cells:  # n
@@ -117,12 +92,11 @@ class GameEngine:
                 if (k, p) in explored_cells:
                     continue
 
-                cell_value = self.generation[k][p]
+                cell_value = self.get_cell_value(k, p)
 
-                new_cell_value = self.verify_cell(k, p, self.generation)  # 3x3
+                new_cell_value = self.verify_cell(k, p, self.alive_cells)  # 3x3
 
                 if cell_value != new_cell_value:
-                    generation_copy[k][p] = new_cell_value
                     self.set_cell_frecuency(k, p, new_cell_value)
                     callback(k, p, new_cell_value)
 
@@ -133,11 +107,9 @@ class GameEngine:
 
         self.current_generation += 1
         self.alive_cells = next_alive_cells
-        self.generation = generation_copy
-        return self.generation
 
-    def verify_cell(self, i, j, board) -> int:
-        cell = board[i][j]
+    def verify_cell(self, i, j, board: set) -> int:
+        cell = 1 if (i, j) in board else 0
 
         total_neighbors = self.get_total_neighbors(board, i, j)
 
@@ -149,7 +121,7 @@ class GameEngine:
 
         return cell
 
-    def get_total_neighbors(self, board: list[list[int]], i: int, j: int) -> int:
+    def get_total_neighbors(self, board: set, i: int, j: int) -> int:
         total_neighbors = 0
 
         for k in [1, 0, -1]:
@@ -160,6 +132,6 @@ class GameEngine:
                 if ni == i and nc == j:
                     continue
 
-                total_neighbors += 1 if board[ni][nc] > 0 else 0
+                total_neighbors += 1 if (ni, nc) in board else 0
 
         return total_neighbors
